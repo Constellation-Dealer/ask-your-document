@@ -10,27 +10,11 @@ A hands-on exercise where you upload a PDF, wait for it to be indexed, and then 
 4. Run `npx --yes http-server . -a localhost -p 3000 -c-1`
 5. Open `http://localhost:3000`
 
-> **If the page does not load, or a call fails with `Failed to fetch`:** something else on your
-> machine is already using port 3000.
->
-> 1. **Most likely it is the previous workshop.** All three exercises serve on 3000, and they run
->    one after another — so the server you started an hour ago still has it. Go back to that
->    terminal and press **Ctrl+C**, then start this one again.
-> 2. **Otherwise, find out what has it:** `lsof -nP -iTCP:3000 -sTCP:LISTEN` (macOS/Linux) or
->    `netstat -ano | findstr :3000` (Windows).
-> 3. **If it is something you need to keep running,** use 5173 instead — it is allowlisted too:
->
->    ```
->    npx --yes http-server . -a localhost -p 5173 -c-1
->    ```
->
->    then open <http://localhost:5173>. Be aware 5173 is Vite's default port, so it may well be
->    taken as well; 3000 with the previous server stopped is the more reliable route.
->
-> **Open the `localhost` address, not the `127.0.0.1` one** that some servers also print.
-> `127.0.0.1` is a *different* origin as far as the browser is concerned, and it is not
-> allowlisted — so that link fails in exactly the same way as a wrong port.
+Then open <http://localhost:3000>.
 
+If 3000 is taken it is almost certainly the previous workshop's server — stop that
+and start this one again. `5173` also works. Those two are the only ports IDMS and
+the Gateway accept, and `127.0.0.1` is a different origin that they do not.
 
 
 6. Click **Run the loop** to see Step 1 execute (and a prompt to implement the rest)
@@ -174,68 +158,26 @@ Open `loop.js` and look for the `TODO: YOUR CODE HERE` comments. Step 1 (Upload)
 
 The key difference from a traditional RAG loop: you do NOT call `vector_search_media` or `get_document_chunks` yourself. The Gateway's LLM agent decides which tools to call and calls them for you. You just watch the SSE events stream in.
 
-## The skill shaping these answers
+## The skill and the agent behind these answers
 
-Every answer you get in this exercise passes through a **system skill** — a short markdown file,
-stored on the platform, prepended to the model's instructions. It is not part of this repo and you
-do not need to touch it to finish the exercise. It is here because it is worth seeing.
+Every answer passes through **`workshop-1-answer-style`** — a short markdown file stored on the
+platform and prepended to the model's instructions. It asks for a `Source:` line naming the document the answer came from.
 
-This workshop's is **`workshop-1-answer-style`**. It asks for a short paragraph plus a `Source:`
-line naming the document the answer
-came from, and tells the model to say so plainly when the documents do not contain the answer.
+It reaches you through an **agent**. `helpers.js` sends `agentId: "workshop-1-agent"`, and
+that agent binds this skill *by name*. That is why you get this workshop's style
+and not another's: the platform picks the skill by name, not by guessing from
+your question.
 
-### 🔴 One skill, everyone's answers — so read it, do not edit it
+The agent also declares this exercise's retrieval tools; without that the agent's
+tool filter fails closed and the document search returns nothing.
 
-**There is one copy, shared by every participant in this workshop, and there is no reset.** An edit
-changes the answers *everyone* gets, immediately. That is not a bug to route around; it is what a
-system skill is.
+> 🔴 **One copy, everyone's answers.** Editing it changes the answers every
+> participant in this workshop gets, immediately. Version history is kept, so a
+> bad edit is recoverable — but so is the recovery, shared.
 
-This exercise is pre-work: people do it alone, over several days, with nobody to announce a change
-to. Edit the skill on the Tuesday and the person who runs the exercise on the Wednesday gets answers
-shaped by your experiment with no way of knowing that is what happened — they will read it as how
-the platform behaves. **So for the pre-work, treat it as read-only: open it, read the markdown, see
-what it is doing to the answers you are getting, and do not save or publish.**
-
-Version history is kept, so a bad edit is recoverable — but only by somebody who notices, and
-nobody working through this alone will.
-
-### Seeing it
-
-1. Open <https://dev-dealeriq.csidealer.com>.
-2. Sign in with the **email and password you were sent** — the same credential that opens the
-   Champion Portal and the one in your `.env`. Use the email/password form, not *Sign in with
-   Microsoft*.
-3. Go to **Skills** and find this workshop's. Your account is scoped to the workshop, so the list
-   is short.
-4. Open `workshop-1-answer-style` and read it. The markdown you see is exactly what shapes your
-   answers — the length, the `Source:` line, what to do when the documents do not contain the
-   answer. Then leave it as you found it.
-
-This one is **published already**, so it is live for you from the start.
-
-### On the day: things worth trying
-
-Save these for the live session, where you can say "I am about to change the skill" out loud before
-you save it, and say when you have put it back. Editing is edit, save, then **publish** — an
-unpublished edit changes nothing.
-
-- Delete the trailing `- workshop-1-answer-style` line and re-run. Nothing marks the answers any
-  more, and you cannot tell whether the skill applied — which is why that line is there.
-- Ask for something the tools cannot answer, then change the instruction about what to do when the
-  answer is not available. That one line is the difference between a useful assistant and a
-  confident wrong one.
-- Look at **version history**. Every save is a version with an author, which is how you find out
-  who changed the room's answers.
-
-> At most **two** skills reach any one request, and they are the same skills for everyone in the
-> room — the pool is not per-person. That is why exactly one of the three workshop skills is
-> published at a time.
->
-> So publishing a second one is not on the list above. Two would already sit at the cap, a third is
-> dropped **silently** — no error, nowhere, and no sign on the answer that a skill went missing —
-> and the room's answers would start moving for a reason nobody in it can see. Workshops 2 and 3
-> are drafts on purpose: a draft is out of the pool. Edit and re-publish *this* workshop's skill as
-> freely as the list invites, and leave the other two as you found them.
+To read or edit it: <https://dev-dealeriq.csidealer.com> → sign in with the email
+and password you were sent → **Skills** → `workshop-1-answer-style`. Edit, save, then **publish**
+— an unpublished edit changes nothing. Re-run and the answers change shape.
 
 ## Configuration
 
