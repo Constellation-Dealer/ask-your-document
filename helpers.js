@@ -474,8 +474,18 @@ async function chatWithGateway(message, onToolStart, onToolComplete, onThinking,
  *
  * Both are prompt text in the end. The agent may ignore either.
  */
+/**
+ * The agent this exercise runs as. It exists to bind workshop-1-answer-style by
+ * NAME: the Gateway's agent flow takes its skill pool from the agent's
+ * allowed_skills, so the style is chosen deterministically rather than winning
+ * a match against the other workshops' skills. The agent also declares this
+ * exercise's retrieval tools, without which the agent tool filter fails closed
+ * and the document search silently returns nothing.
+ */
+const WORKSHOP_AGENT_ID = 'workshop-1-agent';
+
 function _chatRequestBody(message, entity) {
-  if (!entity) return { message };
+  if (!entity) return { message, agentId: WORKSHOP_AGENT_ID };
 
   const scopeLine =
     `(Retrieval scope: search only the documents tagged entityType "${entity.entityType}" and ` +
@@ -484,6 +494,7 @@ function _chatRequestBody(message, entity) {
   return {
     message: `${message}\n\n${scopeLine}`,
     displayMessage: message,
+    agentId: WORKSHOP_AGENT_ID,
     context: {
       appId: 'workshop-1-ask-your-document',
       appName: 'Ask Your Document',
