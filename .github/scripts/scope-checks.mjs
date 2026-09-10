@@ -568,11 +568,20 @@ check('...and it is not accused of going wide either',
 check('...and the card says so plainly rather than guessing',
   nothingVisible.card?.state !== 'failed', nothingVisible.card?.state);
 
-// No entity to ask for at all: the request must go out exactly as it always did.
+// No entity to ask for at all: the request carries no ENTITY fields. It still
+// carries agentId — that binds this workshop's answer style and is
+// unconditional, with nothing to do with whether a handle could be derived.
+// This check used to assert the body had exactly one key; that conflated "no
+// entity" with "no other feature may ever add a field", and the agent binding
+// is the first thing to trip it.
 const bare = await chatRun('', [mediaScoped]);
-check('with no handle the request body is unchanged from before this feature',
-  Object.keys(bare.body).length === 1 && bare.body.message === 'what is the torque?',
+check('with no handle the request carries no entity fields',
+  bare.body.message === 'what is the torque?' &&
+  bare.body.context === undefined &&
+  bare.body.displayMessage === undefined,
   JSON.stringify(bare.body));
+check('...and still binds the workshop agent',
+  bare.body.agentId === 'workshop-1-agent', JSON.stringify(bare.body));
 check('and no scope card claims a scope that was never asked for', bare.card === null);
 
 close();
