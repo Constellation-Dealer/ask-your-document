@@ -171,13 +171,25 @@ your question.
 The agent also declares this exercise's retrieval tools; without that the agent's
 tool filter fails closed and the document search returns nothing.
 
-> 🔴 **One copy, everyone's answers.** Editing it changes the answers every
-> participant in this workshop gets, immediately. Version history is kept, so a
-> bad edit is recoverable — but so is the recovery, shared.
+> 🔴 **One copy, shared by everyone in this workshop — and it cuts both ways.**
+> Editing it changes the answers every other participant gets, immediately. And
+> theirs changes yours: there is no per-person copy and no reset, so whoever
+> published last is the version in force. An edit you made ten minutes ago may
+> already have been replaced without anyone telling you — if your answers
+> suddenly change shape mid-exercise, this is usually why, not the model being
+> flaky. Version history is kept, so a bad edit is recoverable; the recovery is
+> shared too.
+>
+> This session is pre-work, done alone and spread over several days, so
+> "somebody publishes over you" is not hypothetical here — it is the expected
+> case. Reading it teaches the same thing and leaves the next person's run
+> intact.
 
 To read or edit it: <https://dev-dealeriq.csidealer.com> → sign in with the email
-and password you were sent → **Skills** → `workshop-1-answer-style`. Edit, save, then **publish**
-— an unpublished edit changes nothing. Re-run and the answers change shape.
+and password you were sent → **Studio** → **Skills** → `workshop-1-answer-style`.
+Direct link: <https://dev-dealeriq.csidealer.com/skills>. Edit, save, then
+**publish** — an unpublished edit changes nothing. Re-run and the answers change
+shape.
 
 ## Configuration
 
